@@ -1,6 +1,6 @@
 from django.db import models
 
-class Store(models.Model):
+class Product(models.Model):
     name = models.CharField(max_length=255)  # item name
     price = models.IntegerField()  # item price
     description = models.TextField()  # item description
