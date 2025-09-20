@@ -204,6 +204,123 @@ Finally, I built a detail page in product_detail.html. This template displayed a
 <img width="1366" height="768" alt="Screenshot 2025-09-16 124410" src="https://github.com/user-attachments/assets/511147d3-cb86-4063-b7e2-9c815fdc16a3" />
 <img width="1366" height="768" alt="Screenshot 2025-09-16 124433" src="https://github.com/user-attachments/assets/c74f8c8f-71aa-4c0d-a872-b9246172c6dd" />
 
+# Assignment 4
+
+## Authentication Form Pros and Cons
+AuthenticationForm from Django is Django’s built-in login form. It accepts credentials (by default username + password), uses django.`contrib.auth.authenticate()` to validate them, and exposes helpful helpers such as `get_user()` and `confirm_login_allowed()`.
+
+### Advantages
+
+- Ready to use: saves boilerplate (form validation + call to `authenticate()`).
+
+- Integrates with Django auth backends out of the box.
+
+- Handles inactive users via `confirm_login_allowed`.
+
+- Proper error messages and form API for templates.
+
+- Works well with `django.contrib.auth.login()`.
+
+### Disadvantages
+
+- Minimal: only username/password by default (not email-first login).
+
+- Not opinionated about extra security (no built-in rate limiting, lockout, or 2FA).
+
+- UI/fields require subclassing to customize (e.g., add `remember_me`, email login).
+
+- Doesn’t implement account throttling — needs extra packages (e.g., django-axes) for that.
+
+## Authentication vs Authorization — difference & how Django implements them
+#### Authentication (AuthN)
+
+- Definition: Who are you? — verifying identity (username/password, tokens, OAuth, etc.).
+
+Django implementation:
+
+- `django.contrib.auth` with User model and pluggable authentication backends.
+
+- `authenticate()` checks credentials using backends.
+
+- `login(request, user)` sets session and marks user as authenticated `(request.user)`.
+
+`-AuthenticationForm` helps validate credentials.
+
+#### Authorization (AuthZ)
+
+Definition: What are you allowed to do? — permissions, roles, access control.
+
+Django implementation:
+
+- Model-level permissions via `user.has_perm('app.change_model')` and `Model._meta.permissions`.
+
+- `Group` objects to bundle permissions.
+
+- Decorators: `@login_required`, `@permission_required('app.change_model')`, `UserPassesTestMixin`, `PermissionRequiredMixin`.
+
+- For object-level permissions you need third-party libs (e.g., django-guardian) or custom checks in views.
+
+## Sessions vs Cookies for storing state (benefits & drawbacks)
+
+### Benefits
+
+Simple to implement.
+
+Persistent across browser sessions (if not session cookie).
+
+Good for small user preferences or client-only state.
+
+### Drawbacks
+
+Visible to client — don’t store sensitive info (even if signed).
+
+Vulnerable to theft via XSS unless HttpOnly is set.
+
+Size-limited.
+
+Forgery risk if not signed/validated.
+
+### Sessions (server-side, cookie holds only session id)
+
+Django default: server stores session data (database, cache, or signed cookie backend). Browser receives only a session cookie like sessionid.
+
+### Benefits
+
+Sensitive data kept server-side.
+
+More storage capacity (not limited by cookie size).
+
+Server controls lifecycle (invalidate sessions centrally).
+
+### Drawbacks
+
+Requires server storage (DB/Cache); scaling needs shared session store across web servers (Redis, Memcached).
+
+Still depends on session cookie — session id theft can impersonate user.
+
+Extra complexity for distributed deployments (sticky sessions or shared store).
+
+## Are cookies secure by default? Risks & how Django helps
+
+Are cookies secure by default?
+No cookies have default properties that vary by environment, and by default they are not automatically safe for production (e.g., Secure flag is often off in dev). Cookies are susceptible to:
+
+- XSS (JavaScript reads cookies unless HttpOnly),
+
+- CSRF (for state-changing requests),
+
+- Network eavesdropping unless Secure + HTTPS,
+
+- Session fixation / theft if session id is reused.
+
+How Django mitigates these
+
+- CSRF protection: CsrfViewMiddleware + {% csrf_token %}. Tokens prevent forged POSTs.
+
+## Step by Step Tutorial
+Start by updating your Product model to use settings.AUTH_USER_MODEL for a user ForeignKey and set null=True, blank=True so existing rows won’t break; run python manage.py makemigrations and python manage.py migrate to create the column, and if you need to populate existing products create a simple data migration or run a script to assign a default user, then (optionally) change the field to null=False and re-run migrations. Next implement the auth views (login/register/logout) using AuthenticationForm and UserCreationForm, call login(request, user) (which rotates the session) and logout(request) and handle “remember me” with request.session.set_expiry(...). Put all path() entries inside a single urlpatterns = [...] list and name them (login, register, logout, main) so your templates can use {% url 'register' %}; make sure templates include {% csrf_token %}. Protect pages with @login_required and use permission_required or explicit object-level checks (request.user == product.user) for authorization. Harden production security by setting SESSION_COOKIE_SECURE = True, SESSION_COOKIE_HTTPONLY = True, SESSION_COOKIE_SAMESITE = 'Lax', enabling CSRF middleware, and using HTTPS/HSTS/CSP as appropriate. Run your tests and verify flows locally, then commit changes (git add . → git commit -m "..."), fetch remote changes (git fetch origin) and either git rebase origin/master (resolve conflicts, git rebase --continue) or git pull --no-rebase origin master to merge, and finally git push origin master (use --force-with-lease only as a last resort). In production, always run migrations on the server/container before restarting Gunicorn so the DB schema and code stay in sync.
+
+
 
 
 
