@@ -172,6 +172,39 @@ This system ensures that your database structure evolves safely alongside your c
 I believe Django is easy to understand because it is pretty straight forward unlike any javascript framework out there
 and the way to connect the urls and the templates are the easiest out there.
 
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+1. Why do we need data delivery in implementing a platform?
+Because a platform (like a web app, mobile app, or API) doesn’t live in isolation.
+It usually needs to communicate data:
+From backend → frontend (e.g., sending products from a database to be shown on a webpage).
+From frontend → backend (e.g., submitting a form).
+Between different systems/services (e.g., your platform calling an external payment API).
+Without data delivery, a platform would just be static — no dynamic content, no interaction, and no integration with other services.
+
+2. Which is better, XML or JSON? Why is JSON more popular than XML?
+Both XML and JSON are data interchange formats with different strengths. XML supports metadata with attributes and namespaces and is very strict, making it suitable for complex hierarchical data, but it is also very verbose and slower to parse. JSON, on the other hand, is lightweight, less verbose, easier to read and write, and maps directly to data structures in most programming languages such as objects, lists, and key-value pairs. It is also faster to parse and widely supported by JavaScript and modern APIs, although it offers less support for metadata compared to XML. JSON has become more popular because it is lighter, faster, easier to use, and works natively in JavaScript without additional parsing, while XML is still commonly used in enterprise and legacy systems such as SOAP and document standards.
+
+3. What is the purpose of the is_valid() method in Django forms, and why do we need it?
+The is_valid() method in Django forms is used to validate the data submitted by the user against the form’s defined fields and constraints. It checks whether the data is complete, correctly formatted, and adheres to the rules set in the form. This validation process is important to prevent errors and ensure that only clean and reliable data is processed or saved to the database.
+
+4. Why do we need a csrf_token when making forms in Django? What can happen if we don't include a csrf_token in a Django form? How can this be exploited by an attacker?
+A csrf_token is required in Django forms to protect against Cross-Site Request Forgery (CSRF) attacks. If it is not included, an attacker could exploit the vulnerability by tricking a logged-in user into unknowingly submitting malicious requests, such as changing sensitive account details or performing unauthorized actions. By using a csrf_token, Django ensures that form submissions are authentic and originate from trusted sources within the application.
+
+First, I created four new view functions inside the views.py file. These functions were responsible for returning the model objects in both XML and JSON formats, as well as filtering them by ID. To achieve this, I used Django’s serializers module to serialize the querysets into the desired format. For example, I made one function that serialized all objects into XML, another for JSON, and then two more functions that accepted an ID parameter to return a single object in XML or JSON.
+
+Next, I moved to the urls.py file of the app to register the URL routings. For each of the four view functions, I defined a corresponding URL pattern. This ensured that when the URL was accessed, it would trigger the correct view and return the data in the requested format.
+
+After setting up the views and routes, I worked on the main webpage for displaying the model object data. In the template file product.html, I used a loop to display all available objects and added an "Add" button that redirected to the form page using Django’s {% url %} template tag. For each listed object, I also included a "Detail" button, which linked to the detail page of that specific object.
+
+Following that, I created a form page in product_form.html. This page used Django’s form handling system, where the form submission would be processed in the views.py file. Upon submission, the new object would be saved into the database, and the user would be redirected back to the product list page to see the updated list.
+
+Finally, I built a detail page in product_detail.html. This template displayed all the information about a single model object, which was passed from a dedicated view function in views.py. The view fetched the object based on its ID and sent it to the template for rendering.
+
+<img width="1366" height="768" alt="Screenshot 2025-09-16 124410" src="https://github.com/user-attachments/assets/511147d3-cb86-4063-b7e2-9c815fdc16a3" />
+<img width="1366" height="768" alt="Screenshot 2025-09-16 124433" src="https://github.com/user-attachments/assets/c74f8c8f-71aa-4c0d-a872-b9246172c6dd" />
+
+
 
 
 
