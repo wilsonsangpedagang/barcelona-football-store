@@ -1,18 +1,41 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1>Add Product</h1>
+<div class="bg-[#004d98] min-h-screen py-16 px-6 text-white">
+  <div class="max-w-2xl mx-auto bg-[#a50044] rounded-2xl shadow-2xl border border-[#edbb00] p-8">
+    
+    <!-- Header -->
+    <h1 class="text-3xl font-extrabold text-center mb-6">Add New Product</h1>
+    <p class="text-center text-sm mb-8 text-[#edbb00]">
+      Fill in the details below to add your product
+    </p>
 
-<form method="POST">
-  {% csrf_token %}
-  <table>
-    {{ form.as_table }}
-    <tr>
-      <td></td>
-      <td>
-        <input type="submit" value="Add Product" />
-      </td>
-    </tr>
-  </table>
-</form>
+    <!-- Form -->
+    <form method="POST" class="space-y-6">
+      {% csrf_token %}
+      {% for field in form %}
+        <div>
+          <label for="{{ field.id_for_label }}" class="block mb-2 font-medium text-white">
+            {{ field.label }}
+          </label>
+          {{ field }}
+          {% if field.help_text %}
+            <p class="mt-1 text-xs text-gray-200">{{ field.help_text }}</p>
+          {% endif %}
+          {% for error in field.errors %}
+            <p class="text-red-300 text-sm mt-1">{{ error }}</p>
+          {% endfor %}
+        </div>
+      {% endfor %}
+
+      <!-- Submit Button -->
+      <div class="flex justify-center">
+        <button type="submit"
+          class="bg-[#edbb00] text-[#004d98] font-semibold px-6 py-3 rounded-lg hover:bg-white hover:text-[#a50044] transition-colors shadow-md w-full sm:w-auto">
+          ➕ Add Product
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
 
 {% endblock %}

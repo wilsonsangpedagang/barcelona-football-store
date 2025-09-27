@@ -1,0 +1,58 @@
+/* 🎨 Barcelona themed form styles */
+form input,
+form textarea,
+form select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #edbb00;   /* Yellow border */
+  border-radius: 0.5rem;
+  background-color: #004d98;   /* Dark blue background */
+  color: white;                /* White text */
+  font-size: 1rem;
+}
+
+/* Placeholder styling */
+form input::placeholder,
+form textarea::placeholder {
+  color: #ffed02; /* Yellow placeholder */
+  opacity: 0.9;
+}
+
+/* Focus state (when user clicks/typing) */
+form input:focus,
+form textarea:focus,
+form select:focus {
+  outline: none;
+  border-color: #a50044; /* Red accent */
+  box-shadow: 0 0 0 3px rgba(165, 0, 68, 0.4);
+}
+
+/* Checkbox styling */
+form input[type="checkbox"] {
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid #edbb00;
+  border-radius: 0.375rem;
+  background-color: #004d98;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  position: relative;
+}
+
+form input[type="checkbox"]:checked {
+  background-color: #edbb00;
+  border-color: #edbb00;
+}
+
+form input[type="checkbox"]:checked::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #004d98;
+  font-weight: bold;
+  font-size: 0.875rem;
+}

@@ -1,57 +1,58 @@
-<h1>Barcelona Football Shop</h1>
+{% extends 'base.html' %}
+{% load static %}
 
-<!-- Add Product Button -->
-<p>
-  <a href="{% url 'main:create_product' %}">
-    <button>Add Product</button>
-  </a>
-</p>
+{% block meta %}
+<title>Barcelona Football Store</title>
+{% endblock meta %}
 
-{% if not product_list %}
-  <p>No new product in Barcelona Football Shop.</p>
-{% else %}
-  {% for product in product_list %}
-    <div>
-      <h2>
-        <a href="{% url 'main:show_product' product.id %}">
-          {{ product.name }}
-        </a>
-      </h2>
+{% block content %}
+{% include 'navbar.html' %}
 
-      <p>
-        <b>{{ product.category }}</b>
-        {% if product.is_featured %} | <b>Featured</b>{% endif %}
-        | Price: ${{ product.price }}
-      </p>
+<div class="bg-[#004d98] w-full pt-16 min-h-screen text-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-      {% if product.thumbnail %}
-        <img src="{{ product.thumbnail }}" alt="thumbnail" width="150" height="100">
-        <br />
-      {% endif %}
-
-      <p>{{ product.description|truncatewords:25 }}...</p>
-
-      <!-- Detail Button -->
-      <p>
-        <a href="{% url 'main:show_product' product.id %}">
-          <button>Detail</button>
-        </a>
-      </p>
-
-      <a href="{% url 'main:logout' %}">
-        <button>Logout</button>
-      </a>
-
-      <h5>Last login session: {{ last_login }}</h5>
+    <!-- Header Section -->
+    <div class="mb-8 text-center">
+      <h1 class="text-4xl font-extrabold mb-2">Welcome to Barcelona Football Store</h1>
+      <p class="text-lg">Official fan gear, merchandise, and news updates</p>
     </div>
 
-    <hr>
+    <!-- Filter Section -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 bg-[#a50044] rounded-lg border border-[#edbb00] p-4 shadow text-white">
+      <div class="flex space-x-3 mb-4 sm:mb-0">
+        <a href="?" class="{% if request.GET.filter == 'all' or not request.GET.filter %} bg-[#edbb00] text-[#004d98]{% else %}bg-white text-[#004d98]{% endif %} px-4 py-2 rounded-md font-medium transition-colors hover:bg-[#edbb00] hover:text-[#004d98]">
+          All Products
+        </a>
+        <a href="?filter=my" class="{% if request.GET.filter == 'my' %} bg-[#edbb00] text-[#004d98]{% else %}bg-white text-[#004d98]{% endif %} px-4 py-2 rounded-md font-medium transition-colors hover:bg-[#edbb00] hover:text-[#004d98]">
+          My Products
+        </a>
+      </div>
+      {% if user.is_authenticated %}
+        <div class="text-sm">
+          Last login: {{ last_login }}
+        </div>
+      {% endif %}
+    </div>
 
-    <a href="?filter=all">
-      <button type="button">All Product</button>
-    </a>
-    <a href="?filter=my">
-      <button type="button">My Product</button>
-    </a> 
-  {% endfor %}
-{% endif %}
+    <!-- Product Grid -->
+    {% if not product_list %}
+      <div class="bg-[#a50044] rounded-lg border border-[#edbb00] p-12 text-center shadow">
+        <div class="w-32 h-32 mx-auto mb-4">
+          <img src="{% static 'image/no-name.png' %}" alt="No products available" class="w-full h-full object-contain">
+        </div>
+        <h3 class="text-lg font-medium mb-2">No products found</h3>
+        <p class="mb-6">Be the first to add Barcelona merchandise to the store.</p>
+        <a href="{% url 'main:create_product' %}" class="inline-flex items-center px-4 py-2 bg-[#edbb00] text-[#004d98] rounded-md hover:bg-white hover:text-[#a50044] transition-colors">
+          Add Product
+        </a>
+      </div>
+    {% else %}
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for product in product_list %}
+          {% include 'product_card.html' with product=product %}
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock content %}
