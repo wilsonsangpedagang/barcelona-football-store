@@ -320,6 +320,153 @@ How Django mitigates these
 ## Step by Step Tutorial
 Start by updating your Product model to use settings.AUTH_USER_MODEL for a user ForeignKey and set null=True, blank=True so existing rows won’t break; run python manage.py makemigrations and python manage.py migrate to create the column, and if you need to populate existing products create a simple data migration or run a script to assign a default user, then (optionally) change the field to null=False and re-run migrations. Next implement the auth views (login/register/logout) using AuthenticationForm and UserCreationForm, call login(request, user) (which rotates the session) and logout(request) and handle “remember me” with request.session.set_expiry(...). Put all path() entries inside a single urlpatterns = [...] list and name them (login, register, logout, main) so your templates can use {% url 'register' %}; make sure templates include {% csrf_token %}. Protect pages with @login_required and use permission_required or explicit object-level checks (request.user == product.user) for authorization. Harden production security by setting SESSION_COOKIE_SECURE = True, SESSION_COOKIE_HTTPONLY = True, SESSION_COOKIE_SAMESITE = 'Lax', enabling CSRF middleware, and using HTTPS/HSTS/CSP as appropriate. Run your tests and verify flows locally, then commit changes (git add . → git commit -m "..."), fetch remote changes (git fetch origin) and either git rebase origin/master (resolve conflicts, git rebase --continue) or git pull --no-rebase origin master to merge, and finally git push origin master (use --force-with-lease only as a last resort). In production, always run migrations on the server/container before restarting Gunicorn so the DB schema and code stay in sync.
 
+# Assigment 5
+
+### CSS Selector Priority
+
+When multiple CSS selectors apply to the same HTML element, browsers decide which style to apply based on specificity. The order of priority is:
+
+Inline styles – Styles directly added to the element using the style attribute have the highest priority.
+```html
+<p style="color: red;">Hello</p>
+```
+
+ID selectors – Selectors that use an element's ID (#id) are more specific than class or element selectors.
+
+```html
+#myParagraph { color: blue; }
+```
+
+Class, attribute, and pseudo-class selectors – These include .class, [attribute=value], :hover, :nth-child().
+
+```html
+.highlight { color: green; }
+```
+
+Element and pseudo-element selectors – Selectors that target the tag name directly (p, div) or pseudo-elements (::before, ::after) have the lowest specificity.
+
+```css
+p { color: black; }
+```
+
+### Responsive Design
+Responsive design ensures that a web application looks good and functions well across different devices (desktop, tablet, mobile) and screen sizes.
+
+- Importance in Web Application Development:
+
+- Improves user experience on all devices.
+
+- Enhances accessibility and usability.
+
+- Boosts SEO (search engines prefer mobile-friendly websites).
+
+- Reduces the need to maintain multiple versions of a site.
+
+Examples:
+
+- Implemented:
+
+Google.com – Adjusts layout based on screen size. Search bar and buttons scale for mobile.
+
+- Not implemented:
+
+Some older corporate websites still force desktop layouts on mobile, causing horizontal scrolling and unreadable text.
+
+Reasons:
+
+- Implemented examples use CSS media queries, flexible images, and adaptive layouts.
+
+- Non-implemented examples often lack media queries, fixed-width layouts, or use tables for layout, which is not mobile-friendly.
+
+### Box Model
+Every HTML element can be thought of as a box with four layers:
+
+1. Content – The actual content like text or image.
+
+2. Padding – Space between the content and the border.
+
+```css
+padding: 10px;
+```
+
+3. Border – A line surrounding the padding and content.
+
+```css
+border: 2px solid black;
+```
+
+4. Margin – Space outside the border, separating this element from others.
+
+```css
+margin: 15px;
+```
+
+Implementation:
+```css
+div {
+    margin: 20px;
+    border: 2px solid red;
+    padding: 10px;
+}
+```
+
+### Layout Systems
+A. Flexbox
+- Purpose: One-dimensional layout system (row OR column).
+
+- Use case: Align items horizontally or vertically, distribute space evenly.
+
+Example:
+
+```css
+.container {
+    display: flex;
+    justify-content: space-between; /* Horizontal spacing */
+    align-items: center;           /* Vertical alignment */
+}
+```
+
+B. Grid
+- Purpose: Two-dimensional layout system (row AND column).
+
+- Use case: Complex layouts like dashboards or magazine-style pages.
+
+Example:
+```css
+.container {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    gap: 10px;
+}
+```
+
+Difference:
+- Flexbox is simpler for linear alignment (row/column).
+
+- Grid is better for complex, multi-directional layouts.
+
+
+### Implementation
+
+I made 2 new functions in views.py, edit_product and delete_product.
+
+I customize all of my pages using tailwind, changing all of the color into Barcelona theme with these color palette.
+
+```bash
+#a50044 # dark red
+#004d98 # dark blue
+#edbb00 # orange
+#ffed02 # yellow
+#db0030 # light red
+```
+
+I also made the product_card for the newest product published by the website.
+
+I made the navbar using the same color scheme that contains Home and Create Product (for now)
+
+
+
+
 
 
 
