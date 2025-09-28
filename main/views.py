@@ -104,19 +104,17 @@ def logout_user(request):
     response.delete_cookie('last_login')
     return response
 
-def create_news(request):
+@login_required(login_url='/login')
+def create_product(request):
     form = ProductForm(request.POST or None)
 
-    if form.is_valid() and request.method == 'POST':
-        news_entry = form.save(commit = False)
-        news_entry.user = request.user
-        news_entry.save()
+    if form.is_valid() and request.method == "POST":
+        product_entry = form.save(commit=False)  # don't save yet
+        product_entry.user = request.user        # attach logged-in user
+        product_entry.save()
         return redirect('main:show_main')
 
-    context = {
-        'form': form
-    }
-
+    context = {'form': form}
     return render(request, "create_product.html", context)
 
 def edit_product(request, id):

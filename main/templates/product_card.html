@@ -59,12 +59,14 @@
           Read more
         </a>
         <div class="flex space-x-3">
+          <!-- Edit Button -->
           <a href="{% url 'main:edit_product' product.id %}" 
-             class="text-white hover:text-[#edbb00] text-sm font-medium transition-colors">
+             class="px-3 py-1.5 rounded-md bg-[#004d98] text-white text-sm font-medium shadow hover:bg-blue-700 transition">
             Edit
           </a>
+          <!-- Delete Button -->
           <a href="{% url 'main:delete_product' product.id %}" 
-             class="text-[#db0030] hover:text-red-400 text-sm font-medium transition-colors">
+             class="px-3 py-1.5 rounded-md bg-[#edbb00] text-[#a50044] text-sm font-medium shadow hover:bg-yellow-400 hover:text-red-700 transition">
             Delete
           </a>
         </div>
