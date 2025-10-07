@@ -6,12 +6,39 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />    
     {% endblock meta %}
-<link rel="stylesheet" href="{% static 'css/global.css' %}"/>    
-<script src="https://cdn.tailwindcss.com">
-</script>
+    <link rel="stylesheet" href="{% static 'css/global.css' %}"/>    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="{% static 'js/toast.js' %}"></script>
 </head>
 
 <body>
-    {% block content %} {% endblock content %}
+    {% block content %}
+
+    {% endblock content %}
+
+    {% include 'toast.html' %}
+    {% include 'modal.html' %}
+
+    {% if messages %}
+    <script>
+        // Wait for toast.js to load first
+        window.addEventListener('load', function() {
+            // Make sure toast functions exist
+            if (typeof showToast === 'function') {
+                {% for message in messages %}
+                    {% if 'register_toast' in message.message %}
+                        showRegisterToast();
+                    {% elif 'logout_toast' in message.message %}
+                        showLogoutToast();
+                    {% elif 'login_toast' in message.message %}
+                        showLoginToast('{{ request.user.username }}');
+                    {% elif message.tags == 'error' %}
+                        showErrorToast('{{ message }}');
+                    {% endif %}
+                {% endfor %}
+            }
+        });
+    </script>
+    {% endif %}
 </body>
 </html>
